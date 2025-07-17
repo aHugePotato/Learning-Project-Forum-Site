@@ -4,7 +4,8 @@ namespace app\controller;
 
 use app\model\Posts;
 use app\model\Users;
-use think\Db;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 use think\Validate;
 
 class Index extends BaseController
@@ -12,17 +13,18 @@ class Index extends BaseController
     public function index()
     {
         $postsModel = new Posts();
-        if (input("post.newPost")) {
+        if ($newPost = input("post.newPost", null, null)) {
             if (!session("uid") || !(new Validate(["__token__" => 'token']))->check(input("post.")))
                 $this->error();
 
+            $newPost = (new HTMLPurifier(HTMLPurifier_Config::createDefault()))->purify($newPost);
             if (input("get.op") == "edit" && input("get.id")) {
                 if (session("uid") !== $postsModel->where("id", input("get.id"))->find()["user_id"])
                     $this->error();
-                $postsModel->save(["text" => input("post.newPost")], ["id" => input("get.id")]);
+                $postsModel->save(["text" => $newPost], ["id" => input("get.id")]);
                 $this->success("成功", "/");
             } else {
-                $postsModel->save(["text" => input("post.newPost"), "user_id" => session("uid")]);
+                $postsModel->save(["text" => $newPost, "user_id" => session("uid")]);
                 $this->success("成功", "/");
             }
         } else if ($this->request->isGet()) {
@@ -33,11 +35,13 @@ class Index extends BaseController
 
             if (session("uid")) {
                 $uinfo = (new Users())->where("id", session("uid"))->find();
-                $this->assign("uinfo" , $uinfo);
+                $this->assign("uinfo", $uinfo);
             }
 
-            $postList=Posts::with(["users"=>function($query){$query->field('id,name');}])->paginate(15);
-            $this->assign("posts" , $postList);
+            $postList = Posts::with(["users" => function ($query) {
+                $query->field('id,name');
+            }])->order("update_time", "desc")->paginate(15);
+            $this->assign("posts", $postList);
             return view();
         }
     }
@@ -51,5 +55,12 @@ class Index extends BaseController
             $this->success("成功", "/");
         }
         return view();
+    }
+
+    public function ajax_img_upload()
+    {
+        if (empty($_FILES))
+            return;
+        $img = $this->request->file(array_keys($_FILES)[0]);
     }
 }

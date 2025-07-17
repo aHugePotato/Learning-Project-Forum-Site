@@ -33,18 +33,16 @@
             border-bottom: 1px solid rgb(230, 230, 230) !important;
         }
 
-        #bottomSec {
-            background-color: white;
-            height: 60px;
-            width: 800px;
-            border: 2px solid rgb(215, 215, 215);
-            border-bottom: none;
-            position: fixed;
-            left: calc(50vw - 400px);
-            bottom: 0px;
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
+        #postEdit {
+            margin: auto;
+            width: 650px;
+
+            button[type="submit"] {
+                display: block;
+                margin-top: 1em;
+                margin-bottom: 1em;
+                float: right;
+            }
         }
 
         #postUpSec {
@@ -74,6 +72,21 @@
             color: grey;
         }
     </style>
+    <script src="/static/tinymce/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '.tinyMCE',
+            license_key: 'gpl',
+            language_url: "/static/tinymce/js/tinymce/langs/zh_CN.js",
+            language:'zh_CN',
+            plugins: 'image',
+            menubar: 'file edit view insert format',
+            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            images_upload_url: "/",
+            automatic_uploads: false,
+            promotion: false,
+        });
+    </script>
 </head>
 
 <body>
@@ -98,7 +111,7 @@
                     <div id="postUpSec">
                         <div id="postUpLeftSec">
                             <div><?php echo $post["users"]["name"]; ?></div>
-                            <div id="postTime"><?php echo $post["create_time"]; ?></div>
+                            <div id="postTime"><?php echo $post["update_time"]; ?></div>
                         </div>
                         <div id="postOpSec">
                             <?php if (isset($uinfo) && $post["user_id"] == $uinfo["id"]) { ?>
@@ -118,7 +131,7 @@
     <?php if (isset($uinfo)) { ?>
         <div id="bottomSec">
             <form action="" method="post" id="postEdit">
-                <input type="text" name="newPost" value="<?php if (isset($editContent)) echo $editContent; ?>">
+                <textarea name="newPost" id="" class="tinyMCE"><?php if (isset($editContent)) echo $editContent; ?></textarea>
                 <input type="hidden" name="__token__" value="{$Request.token}">
                 <button type="submit">发送</button>
             </form>
