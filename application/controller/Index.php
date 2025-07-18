@@ -6,6 +6,7 @@ use app\model\Posts;
 use app\model\Users;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use think\Response;
 use think\Validate;
 
 class Index extends BaseController
@@ -14,7 +15,7 @@ class Index extends BaseController
     {
         $postsModel = new Posts();
         if ($newPost = input("post.newPost", null, null)) {
-            if (!session("uid") || !(new Validate(["__token__" => 'token']))->check(input("post.")))
+            if (!session("uid") || !(new Validate(["__token__" => 'token', "newPost" => "max:1023"]))->check(input("post.")))
                 $this->error();
 
             $newPost = (new HTMLPurifier(HTMLPurifier_Config::createDefault()))->purify($newPost);
@@ -60,7 +61,12 @@ class Index extends BaseController
     public function ajax_img_upload()
     {
         if (empty($_FILES))
-            return;
+            return Response::create()->code(400);
         $img = $this->request->file(array_keys($_FILES)[0]);
+        $info = $img->validate(["size" => 10485760, "ext" => "jpg,png,gif,jpeg,bmp,ico,jfif,svg"])
+            ->move(ROOT_PATH . 'public' . DS . 'uploads');
+        if (!$info)
+            return Response::create()->code(400);
+        return json(["location" => "/uploads/" . str_replace("\\", "/", $info->getSaveName())]);
     }
 }

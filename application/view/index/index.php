@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ch">
+<html lang="cn">
 
 <head>
     <meta charset="UTF-8">
@@ -80,10 +80,9 @@
             language_url: "/static/tinymce/js/tinymce/langs/zh_CN.js",
             language:'zh_CN',
             plugins: 'image',
+            images_upload_url:"/index/ajax_img_upload",
             menubar: 'file edit view insert format',
             toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
-            images_upload_url: "/",
-            automatic_uploads: false,
             promotion: false,
         });
     </script>
