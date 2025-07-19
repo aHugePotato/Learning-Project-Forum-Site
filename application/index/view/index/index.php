@@ -33,15 +33,30 @@
             border-bottom: 1px solid rgb(230, 230, 230) !important;
         }
 
+        #postVideoSec {
+            padding: 1em;
+            text-align: center;
+
+            & video {
+                width: 60%;
+                border-radius: 4px;
+            }
+        }
+
         #postEdit {
             margin: auto;
             width: 650px;
+            margin-bottom: 1em;
 
-            button[type="submit"] {
-                display: block;
-                margin-top: 1em;
-                margin-bottom: 1em;
-                float: right;
+            #bottomSec-fileSelSec {
+                padding-top: 0.5em;
+                padding-bottom: 0.5em;
+            }
+
+            #bottomSec-submit {
+                padding-top: 0.5em;
+                padding-bottom: 0.5em;
+                text-align: right;
             }
         }
 
@@ -78,11 +93,9 @@
             selector: '.tinyMCE',
             license_key: 'gpl',
             language_url: "/static/tinymce/js/tinymce/langs/zh_CN.js",
-            language:'zh_CN',
+            language: 'zh_CN',
             plugins: 'image',
-            images_upload_url:"/index/ajax_img_upload",
-            menubar: 'file edit view insert format',
-            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            images_upload_url: "/ajax_img_upload",
             promotion: false,
         });
     </script>
@@ -114,14 +127,19 @@
                         </div>
                         <div id="postOpSec">
                             <?php if (isset($uinfo) && $post["user_id"] == $uinfo["id"]) { ?>
-                                <a href="/index/delete/id/<?php echo $post["id"] ?>">删除</a>
-                                <a href="/index?id=<?php echo $post["id"] ?>&op=edit">编辑</a>
+                                <a href="/delete/id/<?php echo $post["id"] ?>">删除</a>
+                                <a href="/?id=<?php echo $post["id"] ?>&op=edit#bottomSec">编辑</a>
                             <?php } ?>
                         </div>
                     </div>
                     <p id="postTextSec">
                         <?php echo $post["text"]; ?>
                     </p>
+                    <?php if ($post["media"]) { ?>
+                        <div id="postVideoSec">
+                            <video controls src="<?php echo $post['media']; ?>"></video>
+                        </div>
+                    <?php } ?>
                 </li>
             <?php } ?>
         </ul>
@@ -129,10 +147,16 @@
     </div>
     <?php if (isset($uinfo)) { ?>
         <div id="bottomSec">
-            <form action="" method="post" id="postEdit">
+            <form action="" method="post" enctype="multipart/form-data" id="postEdit">
                 <textarea name="newPost" id="" class="tinyMCE"><?php if (isset($editContent)) echo $editContent; ?></textarea>
                 <input type="hidden" name="__token__" value="{$Request.token}">
-                <button type="submit">发送</button>
+                <div id="bottomSec-fileSelSec">
+                    <label for="bottomSec-fileSelBut">上传视频:</label><br>
+                </div>
+                <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg" id="bottomSec-fileSelBut">
+                <div id="bottomSec-submit">
+                    <button type="submit">发送</button>
+                </div>
             </form>
         </div>
     <?php } ?>

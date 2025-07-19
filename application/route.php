@@ -9,6 +9,23 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+use think\Route;
+
+Route::alias(
+    [
+        'user' => 'index/User',
+        'test' => 'index/Test'
+    ]
+);
+
+Route::rule(
+    [
+        "" => "index/Index/index",
+        "delete" => "index/Index/delete",
+        "ajax_img_upload" => "index/Index/ajax_img_upload",
+    ]
+);
+
 return [
     '__pattern__' => [
         'name' => '\w+',

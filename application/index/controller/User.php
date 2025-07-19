@@ -1,8 +1,8 @@
 <?php
 
-namespace app\controller;
+namespace app\index\controller;
 
-use app\model\Users;
+use app\common\model\Users;
 use think\Validate;
 use think\Session;
 
@@ -24,7 +24,7 @@ class User extends BaseController
 
     public function logout()
     {
-        session("uid", null);
+        session(null);
         $this->success("登出成功", "/");
     }
     public function login()

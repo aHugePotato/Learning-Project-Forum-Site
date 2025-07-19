@@ -1,11 +1,9 @@
 <?php
 
-namespace app\controller;
+namespace app\index\controller;
 
 use think\Controller;
-use app\model\Posts;
-use app\model\Testbs;
-use app\model\Users;
+use app\common\model\Users;
 
 class Test extends Controller
 {

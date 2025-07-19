@@ -1,8 +1,8 @@
 <?php
 
-namespace app\controller;
+namespace app\management\controller;
 
-use app\model\Users;
+use app\common\model\Users;
 use think\Controller;
 
 class BaseController extends Controller
@@ -10,11 +10,11 @@ class BaseController extends Controller
 
     protected function checkLoginStatus()
     {
-        if (!session("uid"))
+        if (!session("aid"))
             return;
         if (session("loginTime") + 604800 < time())
             session(null);
-        else if (!Users::get(["id"=>session("uid")]))
+        else if (!Users::get(["id"=>session("aid")]))
             session(null);
     }
 

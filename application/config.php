@@ -21,7 +21,7 @@ return [
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
-    'app_multi_module'       => false,
+    'app_multi_module'       => true,
     // 入口自动绑定模块
     'auto_bind_module'       => false,
     // 注册的根命名空间
@@ -95,7 +95,7 @@ return [
     // 是否开启路由解析缓存
     'route_check_cache'      => false,
     // 是否强制使用路由
-    'url_route_must'         => false,
+    'url_route_must'         => true,
     // 域名部署
     'url_domain_deploy'      => false,
     // 域名根，如thinkphp.cn
