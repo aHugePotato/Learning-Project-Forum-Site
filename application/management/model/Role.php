@@ -1,10 +1,10 @@
 <?php
 
-namespace app\common\model;
+namespace app\management\model;
 
 use think\Model;
 
-class Users extends Model
+class Role extends Model
 {
     protected $autoWriteTimestamp = false;
 }

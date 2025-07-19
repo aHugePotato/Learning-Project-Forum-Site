@@ -2,7 +2,7 @@
 
 namespace app\management\controller;
 
-use app\management\model\Admins;
+use app\management\model\Admin;
 use think\Controller;
 
 class Test extends Controller
@@ -10,6 +10,7 @@ class Test extends Controller
 
     public function index()
     {
-        dump(Admins::get(1)->roles());
+      return  json(Admin::get(1)->role);
+        return;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace app\management\model;
 
-use think\model;
+use think\Model\Pivot;
 
-class Admin_role extends Model
+class Admin_role extends Pivot
 {
     protected $autoWriteTimestamp = false;
 }

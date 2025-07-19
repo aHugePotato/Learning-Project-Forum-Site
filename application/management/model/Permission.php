@@ -2,9 +2,9 @@
 
 namespace app\management\model;
 
-use think\model;
+use think\Model;
 
-class Roles extends Model
+class Permission extends Model
 {
     protected $autoWriteTimestamp = false;
 }

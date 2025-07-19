@@ -2,7 +2,7 @@
 
 namespace app\management\controller;
 
-use app\common\model\Users;
+use app\common\model\User;
 use think\Validate;
 use think\Session;
 
@@ -21,7 +21,7 @@ class Admin extends BaseController
             $vali = new Validate(["__token__" => "token", "name" => "require", "password" => "require|max:30|min:5"]);
             if (!$vali->check(input("post.")))
                 $this->error("请检查输入。");
-            $user = (new Users())->where("name", input("post.name"))->find();
+            $user = (new User())->where("name", input("post.name"))->find();
             if (!$user)
                 $this->error("用户不存在。");
             if (!password_verify(input("post.password"), $user["hash"]))

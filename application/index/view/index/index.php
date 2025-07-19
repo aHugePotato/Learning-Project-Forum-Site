@@ -122,7 +122,7 @@
                 <li>
                     <div id="postUpSec">
                         <div id="postUpLeftSec">
-                            <div><?php echo $post["users"]["name"]; ?></div>
+                            <div><?php echo $post["user"]["name"]; ?></div>
                             <div id="postTime"><?php echo $post["update_time"]; ?></div>
                         </div>
                         <div id="postOpSec">

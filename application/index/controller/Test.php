@@ -3,7 +3,7 @@
 namespace app\index\controller;
 
 use think\Controller;
-use app\common\model\Users;
+use app\common\model\User;
 
 class Test extends Controller
 {
@@ -15,6 +15,6 @@ class Test extends Controller
     public function index() {
       // return json(Testbs::with("tests")->select());
        //return json(Posts::with(["users"=>function($query){$query->field('id,email');}])->select());
-       return json(Users::get(9));
+       return json(User::get(9));
     }
 }

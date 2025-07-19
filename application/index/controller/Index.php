@@ -2,8 +2,8 @@
 
 namespace app\index\controller;
 
-use app\common\model\Posts;
-use app\common\model\Users;
+use app\common\model\Post;
+use app\common\model\User;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use think\Response;
@@ -13,7 +13,7 @@ class Index extends BaseController
 {
     public function index()
     {
-        $postsModel = new Posts();
+        $postModel = new Post();
         if ($this->request->isPost()) {
             if (!session("uid") || !(new Validate(["__token__" => "require|token", "newPost" => "require|max:1023"]))->check(input("post.")))
                 $this->error("请检查输入。");
@@ -21,30 +21,30 @@ class Index extends BaseController
             $newPost = (new HTMLPurifier(HTMLPurifier_Config::createDefault()))->purify($newPost);
 
             if (input("get.op") == "edit" && input("get.id")) {
-                if (session("uid") !== $postsModel->where("id", input("get.id"))->find()["user_id"])
+                if (session("uid") !== $postModel->where("id", input("get.id"))->find()["user_id"])
                     $this->error();
                 if (is_int($videoSavePath = $this->save_uploaded_video("video")))
                     $this->error("操作失败");
-                $postsModel->save(["text" => $newPost, "media" => $videoSavePath === false ? null : $videoSavePath], ["id" => input("get.id")]);
+                $postModel->save(["text" => $newPost, "media" => $videoSavePath === false ? null : $videoSavePath], ["id" => input("get.id")]);
                 $this->success("成功", "/");
             } else {
                 if (is_int($videoSavePath = $this->save_uploaded_video("video")))
                     $this->error("操作失败");
-                $postsModel->save(["text" => $newPost, "user_id" => session("uid"), "media" => $videoSavePath === false ? null : $videoSavePath]);
+                $postModel->save(["text" => $newPost, "user_id" => session("uid"), "media" => $videoSavePath === false ? null : $videoSavePath]);
                 $this->success("成功", "/");
             }
         } else if ($this->request->isGet()) {
             if (input("get.op") == "edit" && input("get.id")) {
-                $this->assign("editContent", $postsModel->where("id", input("get.id"))->find()["text"]);
+                $this->assign("editContent", $postModel->where("id", input("get.id"))->find()["text"]);
                 $this->assign("postUpdateId", input("get.id"));
             }
 
             if (session("uid")) {
-                $uinfo = (new Users())->where("id", session("uid"))->find();
+                $uinfo = (new User())->where("id", session("uid"))->find();
                 $this->assign("uinfo", $uinfo);
             }
 
-            $postList = Posts::with(["users" => function ($query) {
+            $postList = Post::with(["user" => function ($query) {
                 $query->field('id,name');
             }])->order("update_time", "desc")->paginate(15);
             $this->assign("posts", $postList);
@@ -57,7 +57,7 @@ class Index extends BaseController
         if ($this->request->isPost() && $id) {
             if (!(new Validate(["__token__" => "require|token"]))->check(input("param.")))
                 $this->error("/");
-            Posts::destroy($id);
+            Post::destroy($id);
             $this->success("成功", "/");
         }
         return view();

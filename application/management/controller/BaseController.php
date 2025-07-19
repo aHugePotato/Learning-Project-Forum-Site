@@ -2,7 +2,7 @@
 
 namespace app\management\controller;
 
-use app\common\model\Users;
+use app\common\model\User;
 use think\Controller;
 
 class BaseController extends Controller
@@ -14,7 +14,7 @@ class BaseController extends Controller
             return;
         if (session("loginTime") + 604800 < time())
             session(null);
-        else if (!Users::get(["id"=>session("aid")]))
+        else if (!User::get(["id"=>session("aid")]))
             session(null);
     }
 
