@@ -15,7 +15,10 @@ class Index extends BaseController
     {
         $postModel = new Post();
         if ($this->request->isPost()) {
-            if (!session("uid") || !(new Validate(["__token__" => "require|token", "newPost" => "require|max:1023"]))->check(input("post.")))
+            if (
+                !session("uid") ||
+                !(new Validate(["__token__" => "require|token", "newPost" => "require|max:1023"]))->check(input("post."))
+            )
                 $this->error("请检查输入。");
             $newPost = input("post.newPost", null, null);
             $newPost = (new HTMLPurifier(HTMLPurifier_Config::createDefault()))->purify($newPost);
@@ -25,12 +28,21 @@ class Index extends BaseController
                     $this->error();
                 if (is_int($videoSavePath = $this->save_uploaded_video("video")))
                     $this->error("操作失败");
-                $postModel->save(["text" => $newPost, "media" => $videoSavePath === false ? null : $videoSavePath], ["id" => input("get.id")]);
+                if (!$postModel->save(
+                    ["text" => $newPost, "media" => $videoSavePath === false ? null : $videoSavePath],
+                    ["id" => input("get.id")]
+                ))
+                    $this->error("操作失败");
                 $this->success("成功", "/");
             } else {
                 if (is_int($videoSavePath = $this->save_uploaded_video("video")))
                     $this->error("操作失败");
-                $postModel->save(["text" => $newPost, "user_id" => session("uid"), "media" => $videoSavePath === false ? null : $videoSavePath]);
+                if (!$postModel->save([
+                    "text" => $newPost,
+                    "user_id" => session("uid"),
+                    "media" => $videoSavePath === false ? null : $videoSavePath
+                ]))
+                    $this->error("操作失败");
                 $this->success("成功", "/");
             }
         } else if ($this->request->isGet()) {
@@ -39,10 +51,9 @@ class Index extends BaseController
                 $this->assign("postUpdateId", input("get.id"));
             }
 
-            if (session("uid")) {
-                $uinfo = (new User())->where("id", session("uid"))->find();
+            global $uinfo;
+            if (!empty($uinfo))
                 $this->assign("uinfo", $uinfo);
-            }
 
             $postList = Post::with(["user" => function ($query) {
                 $query->field('id,name');
@@ -52,12 +63,13 @@ class Index extends BaseController
         }
     }
 
-    public function delete($id)
+    public function delete()
     {
-        if ($this->request->isPost() && $id) {
-            if (!(new Validate(["__token__" => "require|token"]))->check(input("param.")))
+        if ($this->request->isPost() && input("get.id")) {
+            if (!(new Validate(["__token__" => "require|token"]))->check(input("post.")))
                 $this->error("/");
-            Post::destroy($id);
+            if (!Post::destroy(input("get.id")))
+                return $this->error("操作失败");
             $this->success("成功", "/");
         }
         return view();
@@ -75,6 +87,13 @@ class Index extends BaseController
         return json(["location" => "/uploads/" . str_replace("\\", "/", $file->getSaveName())]);
     }
 
+    /**
+     * 检查有无上传视频，有则保存
+     *
+     * @param string $name
+     *
+     * @return bool|int|string
+     */
     protected function save_uploaded_video(string $name)
     {
         if (empty($_FILES[$name]) || $_FILES[$name]["error"] == UPLOAD_ERR_NO_FILE)

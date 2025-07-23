@@ -6,17 +6,20 @@ use app\common\model\User as UserModel;
 use think\Validate;
 use think\Session;
 
-class User extends BaseController
+class Userauth extends BaseController
 {
     public function signup()
     {
         if ($this->request->isPost()) {
             $userModel = new UserModel();
-            $vali = new Validate(["__token__" => "token", "name" => "require|max:200", "email" => "require|email", "password" => "require|max:30|min:5"]);
+            $vali = new Validate(["__token__|require" => "token", "name" => "require|max:200", "email" => "require|email", "password" => "require|max:30|min:5"]);
             if (!$vali->check(input("post.")))
                 $this->error("请检查输入。");
             $userModel->save(["name" => input("post.name"), "email" => input("post.email"), "hash" => password_hash(input("post.password"), PASSWORD_BCRYPT)]);
+            session(null);
+            session_regenerate_id();
             session("uid", $userModel->id);
+            session("loginTime", time());
             $this->success("注册成功。", "/");
         }
         return view();
@@ -30,7 +33,7 @@ class User extends BaseController
     public function login()
     {
         if ($this->request->isPost()) {
-            $vali = new Validate(["__token__" => "token", "email" => "require|email", "password" => "require|max:30|min:5"]);
+            $vali = new Validate(["__token__" => "token|require", "email" => "require|email", "password" => "require|max:30|min:5"]);
             if (!$vali->check(input("post.")))
                 $this->error("请检查输入。");
             $user = (new UserModel())->where("email", input("post.email"))->find();

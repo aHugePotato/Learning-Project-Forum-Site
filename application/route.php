@@ -13,7 +13,7 @@ use think\Route;
 
 Route::alias(
     [
-        'user' => 'index/User',
+        'userauth' => 'index/Userauth',
         'test' => 'index/Test'
     ]
 );

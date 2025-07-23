@@ -92,6 +92,7 @@
         tinymce.init({
             selector: '.tinyMCE',
             license_key: 'gpl',
+            relative_urls: false,
             language_url: "/static/tinymce/js/tinymce/langs/zh_CN.js",
             language: 'zh_CN',
             plugins: 'image',
@@ -107,11 +108,11 @@
         <div id="uSec">
             <?php if (isset($uinfo)) { ?>
                 <div><?php echo $uinfo["name"]; ?></div>
-                <a href="/user/logout"> 登出</a>
+                <a href="/userauth/logout"> 登出</a>
             <?php } else { ?>
-                <a href="/user/login">登入</a>
+                <a href="/userauth/login">登入</a>
                 <span>/</span>
-                <a href="/user/signup">注册</a>
+                <a href="/userauth/signup">注册</a>
             <?php } ?>
         </div>
     </div>
@@ -127,7 +128,7 @@
                         </div>
                         <div id="postOpSec">
                             <?php if (isset($uinfo) && $post["user_id"] == $uinfo["id"]) { ?>
-                                <a href="/delete/id/<?php echo $post["id"] ?>">删除</a>
+                                <a href="/delete/?id=<?php echo $post["id"] ?>">删除</a>
                                 <a href="/?id=<?php echo $post["id"] ?>&op=edit#bottomSec">编辑</a>
                             <?php } ?>
                         </div>
