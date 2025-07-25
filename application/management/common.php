@@ -25,7 +25,7 @@ function get_admin_role($id)
 function check_permission($adminId, string $permission)
 {
     foreach (Admin::get($adminId)->role as $role) {
-        if($role["name"]=="super_admin")
+        if ($role["name"] == "super_admin")
             //超级管理员直接返回true
             return true;
         foreach ($role->permission as $perm) {

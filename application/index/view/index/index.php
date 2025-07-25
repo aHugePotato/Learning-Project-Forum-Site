@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="cn">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
     <title>Posts</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/filepond-master/dist/filepond.css">
     <style>
         #mainSec {
             width: 650px;
@@ -87,8 +88,13 @@
             color: grey;
         }
     </style>
+
+    <script src="/static/filepond-master/dist/filepond.js" referrerpolicy="origin"></script>
     <script src="/static/tinymce/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
+        const inputElement = document.querySelector('.filepond');
+        const pond = FilePond.create(inputElement);
+
         tinymce.init({
             selector: '.tinyMCE',
             license_key: 'gpl',
@@ -153,8 +159,8 @@
                 <input type="hidden" name="__token__" value="{$Request.token}">
                 <div id="bottomSec-fileSelSec">
                     <label for="bottomSec-fileSelBut">上传视频:</label><br>
+                    <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg" id="bottomSec-fileSelBut">
                 </div>
-                <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg" id="bottomSec-fileSelBut">
                 <div id="bottomSec-submit">
                     <button type="submit">发送</button>
                 </div>

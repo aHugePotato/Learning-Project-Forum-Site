@@ -8,6 +8,7 @@ use traits\Model\SoftDelete;
 class Post extends Model
 {
     use SoftDelete;
+    protected $autoWriteTimestamp = true;
     protected $deleteTime = 'delete_time';
     
     public function user()

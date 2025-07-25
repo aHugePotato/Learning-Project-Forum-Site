@@ -13,13 +13,12 @@ class Posts extends BaseController
             $this->error("请先登入。", "/management/adminauth/login");
         if (empty(get_admin_role(session("aid"))))
             $this->error("权限不足。", "/management/adminauth/login");
+        global $ainfo;
+        $this->assign("ainfo", $ainfo);
     }
 
     public function index()
     {
-        global $ainfo;
-        $this->assign("ainfo", $ainfo);
-
         $tableData = Post::with(["user" => function ($q) {
             $q->field("id,name");
         }])
@@ -34,11 +33,8 @@ class Posts extends BaseController
         return view();
     }
 
-    public function detail($id)
+    public function details($id)
     {
-        global $ainfo;
-        $this->assign("ainfo", $ainfo);
-
         $data = Post::with(["user" => function ($q) {
             $q->field("id,name");
         }])->where("id", $id)->find();
@@ -52,11 +48,14 @@ class Posts extends BaseController
 
     public function delete()
     {
-        if($this->request->isGet())
-            return view(null,["hard"=>input("get.hard") == "true"]);
-        
-        if (!(new Validate(["__token__" => "require|token"]))->check(input("post.")))
-            $this->error();
+        if ($this->request->isGet())
+            return view(null, ["hard" => input("get.hard") == "true"]);
+
+        if (
+            !(new Validate(["__token__" => "require|token"]))->check(input("post.")) ||
+            !check_permission(session("aid"), "delete_post")
+        )
+            $this->error("请检查输入");
         if (($isHard = (input("get.hard") == "true")) && !check_permission(session("aid"), "delete_post_perm"))
             $this->error();
         if (!Post::destroy(input("get.id"), $isHard))

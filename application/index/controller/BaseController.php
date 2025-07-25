@@ -8,7 +8,7 @@ use think\Controller;
 class BaseController extends Controller
 {
 
-    protected function checkLoginStatus()
+    /*   protected function checkLoginStatus()
     {
         global $uinfo;
         if (!session("uid"))
@@ -17,11 +17,11 @@ class BaseController extends Controller
             session(null);
         else if (!$uinfo = User::get(["id" => session("uid")]))
             session(null);
-    }
+    }*/
 
     public function __construct($request = null)
     {
         parent::__construct($request);
-        $this->checkLoginStatus();
+       // $this->checkLoginStatus();
     }
 }

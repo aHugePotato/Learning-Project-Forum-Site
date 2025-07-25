@@ -40,6 +40,8 @@ class Adminauth extends BaseController
             $admin = (new AdminModel())->where("name", input("post.name"))->find();
             if (!$admin)
                 $this->error("用户不存在。");
+            if($admin["disabled"])
+                $this->error("账户已禁用。");
             if (!password_verify(input("post.password"), $admin["hash"]))
                 $this->error("密码错误。");
             session(null);

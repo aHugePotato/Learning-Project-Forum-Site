@@ -28,21 +28,19 @@ class Index extends BaseController
                     $this->error();
                 if (is_int($videoSavePath = $this->save_uploaded_video("video")))
                     $this->error("操作失败");
-                if (!$postModel->save(
+                !$postModel->save(
                     ["text" => $newPost, "media" => $videoSavePath === false ? null : $videoSavePath],
                     ["id" => input("get.id")]
-                ))
-                    $this->error("操作失败");
+                );
                 $this->success("成功", "/");
             } else {
                 if (is_int($videoSavePath = $this->save_uploaded_video("video")))
                     $this->error("操作失败");
-                if (!$postModel->save([
+                !$postModel->save([
                     "text" => $newPost,
                     "user_id" => session("uid"),
                     "media" => $videoSavePath === false ? null : $videoSavePath
-                ]))
-                    $this->error("操作失败");
+                ]);
                 $this->success("成功", "/");
             }
         } else if ($this->request->isGet()) {

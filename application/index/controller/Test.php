@@ -5,9 +5,15 @@ namespace app\index\controller;
 use think\Controller;
 use app\common\model\User;
 use app\management\model\Admin;
+use think\Hook;
 
-class Test extends Controller
+class Test extends BaseController
 {
+    public function _initialize()
+    {
+        //  Hook::add('action_begin', 'app\\index\\behavior\\Test');
+    }
+
     private static function f()
     {
         return;
@@ -15,10 +21,9 @@ class Test extends Controller
 
     public function index()
     {
-        // return json(Testbs::with("tests")->select());
-        //return json(Posts::with(["users"=>function($query){$query->field('id,email');}])->select());
-        $a = Admin::get(2);
-        $a->hash = password_hash("123456", PASSWORD_BCRYPT);
-        $a->save();
+        $a = [1, 2,  4, 5, 6, 7];
+        $b = [2, 3,  5, 6, 7, 8, 9];
+
+        return json(uq_array_diff_bi($a, $b));
     }
 }

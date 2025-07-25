@@ -6,7 +6,8 @@ use think\Model;
 
 class Admin extends Model
 {
-    protected $autoWriteTimestamp = false;
+    protected $autoWriteTimestamp = true;
+    protected $updateTime = false;
 
     public function role()
     {

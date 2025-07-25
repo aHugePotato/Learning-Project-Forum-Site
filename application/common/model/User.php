@@ -6,5 +6,6 @@ use think\Model;
 
 class User extends Model
 {
-    protected $autoWriteTimestamp = false;
+    protected $autoWriteTimestamp = true;
+    protected $updateTime = false;
 }
