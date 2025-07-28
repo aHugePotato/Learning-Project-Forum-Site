@@ -10,9 +10,9 @@ class Posts extends BaseController
     public function _initialize()
     {
         if (!session("aid"))
-            $this->error("请先登入。", "/management/adminauth/login");
+            $this->error("请先登入。", "/management/admin_auth/login");
         if (empty(get_admin_role(session("aid"))))
-            $this->error("权限不足。", "/management/adminauth/login");
+            $this->error("权限不足。", "/management/admin_auth/login");
         global $ainfo;
         $this->assign("ainfo", $ainfo);
     }

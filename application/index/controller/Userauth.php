@@ -6,7 +6,7 @@ use app\common\model\User as UserModel;
 use think\Validate;
 use think\Session;
 
-class Userauth extends BaseController
+class UserAuth extends BaseController
 {
     public function signup()
     {

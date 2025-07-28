@@ -11,9 +11,9 @@ class Admins extends BaseController
     public function _initialize()
     {
         if (!session("aid"))
-            $this->error("请先登入。", "/management/adminauth/login");
+            $this->error("请先登入。", "/management/admin_auth/login");
         if (empty(check_permission(session("aid"), "view_admins")))
-            $this->error("权限不足。", "/management/adminauth/login");
+            $this->error("权限不足。", "/management/admin_auth/login");
         global $ainfo;
         $this->assign("ainfo", $ainfo);
     }

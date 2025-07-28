@@ -74,7 +74,7 @@
         </ul>
         <div id="uSec">
             <div><?php echo $ainfo["name"]; ?></div>
-            <a href="/management/adminauth/logout"> 登出</a>
+            <a href="/management/admin_auth/logout"> 登出</a>
         </div>
     </div>
     <div id="mainSec">

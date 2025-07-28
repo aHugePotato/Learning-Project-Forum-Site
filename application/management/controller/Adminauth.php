@@ -6,7 +6,7 @@ use app\management\model\Admin as AdminModel;
 use think\Validate;
 use think\Session;
 
-class Adminauth extends BaseController
+class AdminAuth extends BaseController
 {
     public function signup()
     {
@@ -28,7 +28,7 @@ class Adminauth extends BaseController
     public function logout()
     {
         session(null);
-        $this->success("登出成功", "/management/adminauth/login");
+        $this->success("登出成功", "/management/admin_auth/login");
     }
 
     public function login()

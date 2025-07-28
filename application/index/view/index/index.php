@@ -91,20 +91,26 @@
 
     <script src="/static/filepond-master/dist/filepond.js" referrerpolicy="origin"></script>
     <script src="/static/tinymce/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        const inputElement = document.querySelector('.filepond');
-        const pond = FilePond.create(inputElement);
+    <script type="module">
+        import zh_CN from '/static/filepond-master/locale/zh-cn.js';
 
-        tinymce.init({
-            selector: '.tinyMCE',
-            license_key: 'gpl',
-            relative_urls: false,
-            language_url: "/static/tinymce/js/tinymce/langs/zh_CN.js",
-            language: 'zh_CN',
-            plugins: 'image',
-            images_upload_url: "/ajax_img_upload",
-            promotion: false,
-        });
+        function onDOMCLoad() {
+            FilePond.setOptions(zh_CN);
+            const inputElement = document.querySelector('.filepond')
+            const pond = FilePond.create(inputElement,{server:"/upload_handler"})
+
+            tinymce.init({
+                selector: '.tinyMCE',
+                license_key: 'gpl',
+                relative_urls: false,
+                language_url: "/static/tinymce/js/tinymce/langs/zh_CN.js",
+                language: 'zh_CN',
+                plugins: 'image',
+                images_upload_url: "/ajax_img_upload",
+                promotion: false,
+            })
+        }
+        document.addEventListener("DOMContentLoaded", onDOMCLoad)
     </script>
 </head>
 
@@ -114,11 +120,11 @@
         <div id="uSec">
             <?php if (isset($uinfo)) { ?>
                 <div><?php echo $uinfo["name"]; ?></div>
-                <a href="/userauth/logout"> 登出</a>
+                <a href="/user_auth/logout"> 登出</a>
             <?php } else { ?>
-                <a href="/userauth/login">登入</a>
+                <a href="/user_auth/login">登入</a>
                 <span>/</span>
-                <a href="/userauth/signup">注册</a>
+                <a href="/user_auth/signup">注册</a>
             <?php } ?>
         </div>
     </div>
@@ -159,7 +165,7 @@
                 <input type="hidden" name="__token__" value="{$Request.token}">
                 <div id="bottomSec-fileSelSec">
                     <label for="bottomSec-fileSelBut">上传视频:</label><br>
-                    <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg" id="bottomSec-fileSelBut">
+                    <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg" class="filepond" id="bottomSec-fileSelBut">
                 </div>
                 <div id="bottomSec-submit">
                     <button type="submit">发送</button>

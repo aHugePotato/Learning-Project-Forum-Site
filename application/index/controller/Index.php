@@ -64,7 +64,7 @@ class Index extends BaseController
     public function delete()
     {
         if ($this->request->isPost() && input("get.id")) {
-            if (!(new Validate(["__token__" => "require|token"]))->check(input("post.")))
+            if (!(new Validate(["__token__" => "require|token"]))->check(input("post.")) || !session("uid"))
                 $this->error("/");
             if (!Post::destroy(input("get.id")))
                 return $this->error("操作失败");
@@ -75,32 +75,36 @@ class Index extends BaseController
 
     public function ajax_img_upload()
     {
-        if (empty($_FILES) || array_values($_FILES)[0]["error"])
+        if(!session("uid"))
+            return Response::create()->code(403);
+        if (empty($_FILES))
             return Response::create()->code(400);
-        $file = $this->request->file(array_keys($_FILES)[0]);
-        if (!$file = $file->validate(["size" => 10485760, "ext" => "jpg,png,gif,jpeg,bmp,ico,jfif,svg"]))
-            return Response::create()->code(400);
-        if (!$file = $file->move(ROOT_PATH . 'public' . DS . 'uploads'))
+        if (!$file = $this->request->file(array_keys($_FILES)[0]))
+            return Response::create()->code(500);
+        if (!$file = $file->validate(["size" => 10485760, "ext" => "jpg,png,gif,jpeg,bmp,ico,jfif,svg"])
+            ->move(ROOT_PATH . 'public' . DS . 'uploads'))
             return Response::create()->code(500);
         return json(["location" => "/uploads/" . str_replace("\\", "/", $file->getSaveName())]);
     }
 
     /**
      * 检查有无上传视频，有则保存
-     *
+     *deprecated
+     * 
      * @param string $name
      *
      * @return bool|int|string
      */
     protected function save_uploaded_video(string $name)
     {
+        if(!session("uid"))
+            return Response::create()->code(403);
         if (empty($_FILES[$name]) || $_FILES[$name]["error"] == UPLOAD_ERR_NO_FILE)
             return false;
         if (!$file = $this->request->file($name))
             return 500;
-        if (!$file = $file->validate(["size" => 300485760, "ext" => "mp4,mov,avi,mwv,mkv,mpg,mpeg"]))
-            return 400;
-        if (!$file = $file->move(ROOT_PATH . 'public' . DS . 'uploads'))
+        if (!$file = $file->validate(["size" => 300485760, "ext" => "mp4,mov,avi,mwv,mkv,mpg,mpeg"])
+            ->move(ROOT_PATH . 'public' . DS . 'uploads'))
             return 500;
         return "/uploads/" . str_replace("\\", "/", $file->getSaveName());
     }

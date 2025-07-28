@@ -8,7 +8,7 @@ class Users extends BaseController
     public function index()
     {
         if (!session("aid"))
-            $this->error("请先登入。","/management/adminauth/login");
+            $this->error("请先登入。","/management/admin_auth/login");
         if(empty(check_permission(session("aid"),"view_users")))
             $this->error("权限不足。");
 

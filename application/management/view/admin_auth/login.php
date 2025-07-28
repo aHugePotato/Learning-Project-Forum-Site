@@ -50,7 +50,7 @@
             <button type="submit">登入</button>
         </form>
         <div id="linkSec">
-            <a href="/management/adminauth/signup">注册</a>
+            <a href="/management/admin_auth/signup">注册</a>
         </div>
     </div>
 </body>

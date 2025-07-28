@@ -13,7 +13,8 @@ use think\Route;
 
 Route::alias(
     [
-        'userauth' => 'index/Userauth',
+        'user_auth' => 'index/user_auth',
+        'upload_handler' => 'index/upload_handler',
         'test' => 'index/Test'
     ]
 );
