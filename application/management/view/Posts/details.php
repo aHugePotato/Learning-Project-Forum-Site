@@ -35,6 +35,11 @@
         padding-top: 0px;
     }
 
+    #replyToSec{
+        display: block;
+        font-style: italic;
+    }
+
     #contentSec {
         border: 1px solid rgb(215, 215, 215);
     }
@@ -64,6 +69,12 @@
 <div id="mainSec">
     <h2 id="mainSecTitle">发文详细</h2>
     <h3 id="textTitle">内容</h3>
+    <?php if ($data["reply_to_update_time"]) { ?>
+        <a id="replyToSec" href="<?php echo "/management/posts/details/id/" . $data["reply_to_id"] ?>">
+            <?php echo "回复 " . $data["reply_to_user_name"] . " 在 " . $data["reply_to_update_time"]
+                . " 的发文(id:" . $data["reply_to_id"] . ") :" ?>
+        </a>
+    <?php } ?>
     <div id="contentSec">
         <div id="textSec"><?php echo $data["text"] ?></div>
         <?php if (!empty($data["media"])) { ?>
@@ -90,8 +101,8 @@
             <td><?php echo $data["create_time"] ?></td>
             <td><?php echo $data["update_time"] ?></td>
             <td><?php echo $data["delete_time"] ?></td>
-            <td><?php echo $data["user"]["id"] ?></td>
-            <td><?php echo $data["user"]["name"] ?></td>
+            <td><?php echo $data["user_id"] ?></td>
+            <td><?php echo $data["user_name"] ?></td>
             <td><?php echo $data["media"] ?></td>
         </tr>
     </table>

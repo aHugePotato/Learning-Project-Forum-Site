@@ -13,6 +13,7 @@
         <th>用户id</th>
         <th>用户名</th>
         <th>视频路径</th>
+        <th>的回复</th>
         <th>操作</th>
     </tr>
     <?php foreach ($tableData as $i) { ?>
@@ -25,6 +26,7 @@
             <td><?php echo $i["user"]["id"] ?></td>
             <td><?php echo $i["user"]["name"] ?></td>
             <td><?php echo $i["media"] ?></td>
+            <td><?php echo $i["post_id"] ?></td>
             <td><a href="<?php echo "/management/posts/details/id/" . $i["id"] ?>">详细/管理</a></td>
         </tr>
     <?php } ?>

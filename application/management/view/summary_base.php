@@ -36,7 +36,7 @@
             margin: auto;
             margin-top: 80px;
             margin-bottom: 80px;
-            min-width: max(650px, 75vw);
+            min-width: max(650px, 85vw);
             max-width: 900px;
             padding-left: 50px;
             padding-right: 50px;
