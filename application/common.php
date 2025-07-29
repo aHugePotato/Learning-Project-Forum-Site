@@ -11,6 +11,18 @@
 
 // 应用公共文件
 
+/**
+ * function sanitize_filename
+ * 过滤文件名
+ *
+ * @param string $fname
+ *
+ * @return mixed
+ */
+function sanitize_filename(string $fname)
+{
+    return preg_replace('/[^A-z0-9.]+/', '-', $fname);
+}
 
 /**
  * function uq_array_diff_bi

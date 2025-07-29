@@ -43,7 +43,7 @@
         <h1 id="title">综合管理</h1>
         <ul id="navMidSec">
             <li {$Request.controller=="Posts" ?='class="currentPage"' }><a href="/management/posts"><span>发文</span></a></li>
-            <li {$Request.controller=="Users" ?='class="currentPage"' }><a href="/management/users"><span>用户</span></a></li>
+            <li {$Request.controller=="Users" ?='class="currentPage"' }><a href="/management/users"><span>用户(待制作)</span></a></li>
             <li {$Request.controller=="Admins" ?='class="currentPage"' }><a href="/management/admins"><span>管理员</span></a></li>
         </ul>
         <div id="uSec">

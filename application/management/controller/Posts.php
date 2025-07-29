@@ -58,8 +58,11 @@ class Posts extends BaseController
             $this->error("请检查输入");
         if (($isHard = (input("get.hard") == "true")) && !check_permission(session("aid"), "delete_post_perm"))
             $this->error();
-        if (!Post::destroy(input("get.id"), $isHard))
+        if(!$post = Post::get(input("get.id")))
             return $this->error("操作失败");
+        if (!$post->delete())
+            return $this->error("操作失败");
+        @unlink(ROOT_PATH . 'public' . DS . 'uploads' . DS . $post["media"]);
         $this->success("成功", "/management/posts");
     }
 }

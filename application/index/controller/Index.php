@@ -22,30 +22,55 @@ class Index extends BaseController
                 $this->error("请检查输入。");
             $newPost = input("post.newPost", null, null);
             $newPost = (new HTMLPurifier(HTMLPurifier_Config::createDefault()))->purify($newPost);
+            $vidFileId = input("post.video") ? sanitize_filename(input("post.video")) : null;
 
             if (input("get.op") == "edit" && input("get.id")) {
-                if (session("uid") !== $postModel->where("id", input("get.id"))->find()["user_id"])
+                $curPost = $postModel->where("id", input("get.id"))->find();
+                if (session("uid") !== $curPost["user_id"])
                     $this->error();
-                if (is_int($videoSavePath = $this->save_uploaded_video("video")))
+
+                $saveArr = ["text" => $newPost];
+
+                if (!$vidFileId) {
+                    $saveArr["media"] = null;
+                    @unlink(ROOT_PATH . 'public' . DS . 'uploads' . DS . $curPost["media"]);
+                } else if (
+                    $vidFileId
+                    && $vidFileId != "mock"
+                ) {
+                    if (!empty($curPost["media"]))
+                        @unlink(ROOT_PATH . 'public' . DS . 'uploads' . DS . $curPost["media"]);
+                    if (!@UploadHandler::move_to_permanent($vidFileId))
+                        $this->error("操作失败");
+                    $saveArr["media"] = date("Ymd") . "/" . $vidFileId;
+                }
+
+                if (!$postModel->save($saveArr,["id" => input("get.id")]))
                     $this->error("操作失败");
-                !$postModel->save(
-                    ["text" => $newPost, "media" => $videoSavePath === false ? null : $videoSavePath],
-                    ["id" => input("get.id")]
-                );
                 $this->success("成功", "/");
             } else {
-                if (is_int($videoSavePath = $this->save_uploaded_video("video")))
+                if ($vidFileId && !@UploadHandler::move_to_permanent($vidFileId))
                     $this->error("操作失败");
-                !$postModel->save([
+                if (!$postModel->save([
                     "text" => $newPost,
                     "user_id" => session("uid"),
-                    "media" => $videoSavePath === false ? null : $videoSavePath
-                ]);
+                    "media" => $vidFileId ?  date("Ymd") . "/" . $vidFileId : null
+                ]))
+                    $this->error("操作失败");
+
                 $this->success("成功", "/");
             }
         } else if ($this->request->isGet()) {
             if (input("get.op") == "edit" && input("get.id")) {
-                $this->assign("editContent", $postModel->where("id", input("get.id"))->find()["text"]);
+                $post = $postModel->where("id", input("get.id"))->find();
+                $this->assign("editContent", $post["text"]);
+                if (!empty($post["media"]))
+                    $this->assign("editVidInfo", [
+                        "source" => "mock",
+                        "name" => explode("/", $post["media"])[1],
+                        "size" => filesize(ROOT_PATH . 'public' . DS . 'uploads' . DS . $post["media"]),
+                        "type" => "video/".pathinfo($post["media"],PATHINFO_EXTENSION)
+                    ]);
                 $this->assign("postUpdateId", input("get.id"));
             }
 
@@ -66,7 +91,11 @@ class Index extends BaseController
         if ($this->request->isPost() && input("get.id")) {
             if (!(new Validate(["__token__" => "require|token"]))->check(input("post.")) || !session("uid"))
                 $this->error("/");
-            if (!Post::destroy(input("get.id")))
+            if (!$post = Post::get(input("get.id")))
+                return $this->error("操作失败");
+            if (!empty($post["media"]))
+                @unlink(ROOT_PATH . 'public' . DS . 'uploads' . DS . $post["media"]);
+            if (!$post->delete())
                 return $this->error("操作失败");
             $this->success("成功", "/");
         }
@@ -75,7 +104,7 @@ class Index extends BaseController
 
     public function ajax_img_upload()
     {
-        if(!session("uid"))
+        if (!session("uid"))
             return Response::create()->code(403);
         if (empty($_FILES))
             return Response::create()->code(400);
@@ -88,8 +117,8 @@ class Index extends BaseController
     }
 
     /**
+     * deprecated
      * 检查有无上传视频，有则保存
-     *deprecated
      * 
      * @param string $name
      *
@@ -97,7 +126,7 @@ class Index extends BaseController
      */
     protected function save_uploaded_video(string $name)
     {
-        if(!session("uid"))
+        if (!session("uid"))
             return Response::create()->code(403);
         if (empty($_FILES[$name]) || $_FILES[$name]["error"] == UPLOAD_ERR_NO_FILE)
             return false;

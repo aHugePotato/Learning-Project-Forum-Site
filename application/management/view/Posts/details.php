@@ -35,8 +35,18 @@
         padding-top: 0px;
     }
 
-    #textSec {
+    #contentSec {
         border: 1px solid rgb(215, 215, 215);
+    }
+
+    #videoSec {
+        padding-top: 1em;
+        padding-bottom: 1em;
+
+        & video {
+            width: 60%;
+            border-radius: 4px;
+        }
     }
 
     #rawSec {
@@ -54,7 +64,14 @@
 <div id="mainSec">
     <h2 id="mainSecTitle">发文详细</h2>
     <h3 id="textTitle">内容</h3>
-    <div id="textSec"><?php echo $data["text"] ?></div>
+    <div id="contentSec">
+        <div id="textSec"><?php echo $data["text"] ?></div>
+        <?php if (!empty($data["media"])) { ?>
+            <div id="videoSec">
+                <video controls src="<?php echo "/uploads/" . $data['media']; ?>"></video>
+            </div>
+        <?php } ?>
+    </div>
     <h3 id="rawTitle">原生</h3>
     <div id="rawSec"><?php echo htmlspecialchars($data["text"]) ?></div>
     <h3 id="infoTitle">信息</h3>

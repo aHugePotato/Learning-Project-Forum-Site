@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/filepond-master/dist/filepond.css">
     <style>
+        #title {
+            color: black;
+        }
+
         #mainSec {
             width: 650px;
             margin: auto;
@@ -36,7 +40,6 @@
 
         #postVideoSec {
             padding: 1em;
-            text-align: center;
 
             & video {
                 width: 60%;
@@ -94,10 +97,37 @@
     <script type="module">
         import zh_CN from '/static/filepond-master/locale/zh-cn.js';
 
+        var filepondMock =
+            <?php
+            if (isset($editVidInfo))
+                echo "{source:'" . $editVidInfo["source"] . "',name:'" . $editVidInfo["name"]
+                    . "',size:'" . $editVidInfo["size"] . "',type:'" . $editVidInfo["type"] . "'}";
+            else echo "null";
+            ?>
+
+
         function onDOMCLoad() {
             FilePond.setOptions(zh_CN);
             const inputElement = document.querySelector('.filepond')
-            const pond = FilePond.create(inputElement,{server:"/upload_handler"})
+            const pond = FilePond.create(inputElement, {
+                server: "/upload_handler",
+                files: filepondMock ? [{
+                    // the server file reference
+                    source: filepondMock.source,
+
+                    // set type to local to indicate an already uploaded file
+                    options: {
+                        type: 'local',
+
+                        // mock file information
+                        file: {
+                            name: filepondMock.name,
+                            size: filepondMock.size,
+                            type: filepondMock.type,
+                        }
+                    }
+                }] : null
+            })
 
             tinymce.init({
                 selector: '.tinyMCE',
@@ -116,7 +146,9 @@
 
 <body>
     <div id="nav">
-        <h1 id="title">论坛</h1>
+        <a href="/">
+            <h1 id="title">论坛</h1>
+        </a>
         <div id="uSec">
             <?php if (isset($uinfo)) { ?>
                 <div><?php echo $uinfo["name"]; ?></div>
@@ -137,6 +169,7 @@
                         <div id="postUpLeftSec">
                             <div><?php echo $post["user"]["name"]; ?></div>
                             <div id="postTime"><?php echo $post["update_time"]; ?></div>
+                            <?php if (isset($uinfo)) echo "<a href='/?reply=" . $post["id"] . "'>回复</a>" ?>
                         </div>
                         <div id="postOpSec">
                             <?php if (isset($uinfo) && $post["user_id"] == $uinfo["id"]) { ?>
@@ -150,7 +183,7 @@
                     </p>
                     <?php if ($post["media"]) { ?>
                         <div id="postVideoSec">
-                            <video controls src="<?php echo $post['media']; ?>"></video>
+                            <video controls src="<?php echo "/uploads/" . $post['media']; ?>"></video>
                         </div>
                     <?php } ?>
                 </li>
@@ -160,13 +193,21 @@
     </div>
     <?php if (isset($uinfo)) { ?>
         <div id="bottomSec">
+            <div id="bottomSe-reply"></div>
             <form action="" method="post" enctype="multipart/form-data" id="postEdit">
-                <textarea name="newPost" id="" class="tinyMCE"><?php if (isset($editContent)) echo $editContent; ?></textarea>
                 <input type="hidden" name="__token__" value="{$Request.token}">
+
+                <label for="bottomSec-text" style="display: none;">编辑新发文</label>
+                <textarea name="newPost" id="bottomSec-text" class="tinyMCE">
+                    <?php if (isset($editContent)) echo $editContent; ?>
+                </textarea>
+
                 <div id="bottomSec-fileSelSec">
                     <label for="bottomSec-fileSelBut">上传视频:</label><br>
-                    <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg" class="filepond" id="bottomSec-fileSelBut">
+                    <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg"
+                        class="filepond" id="bottomSec-fileSelBut">
                 </div>
+
                 <div id="bottomSec-submit">
                     <button type="submit">发送</button>
                 </div>
