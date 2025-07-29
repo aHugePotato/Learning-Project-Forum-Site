@@ -10,9 +10,14 @@ class Post extends Model
     use SoftDelete;
     protected $autoWriteTimestamp = true;
     protected $deleteTime = 'delete_time';
-    
+
     public function user()
     {
         return $this->belongsTo("User");
+    }
+
+    public function post()
+    {
+        return $this->belongsTo("Post");
     }
 }

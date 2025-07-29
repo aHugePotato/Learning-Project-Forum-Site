@@ -47,7 +47,7 @@
             }
         }
 
-        #postEdit {
+        #bottomSec {
             margin: auto;
             width: 650px;
             margin-bottom: 1em;
@@ -62,6 +62,17 @@
                 padding-bottom: 0.5em;
                 text-align: right;
             }
+        }
+
+        #bottomSec-replyTo {
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
+        }
+
+        #postReplyToSec {
+            font-size: 0.8em;
+            font-style: italic;
+            color: #404040;
         }
 
         #postUpSec {
@@ -82,17 +93,18 @@
             }
         }
 
+        #postTime {
+            color: grey;
+        }
+
         #postTextSec {
             font-size: 1.2em;
             word-break: break-all;
         }
-
-        #postTime {
-            color: grey;
-        }
     </style>
 
     <script src="/static/filepond-master/dist/filepond.js" referrerpolicy="origin"></script>
+    <script src="/static/filepond-plugin-file-validate-type-master/dist/filepond-plugin-file-validate-type.js" referrerpolicy="origin"></script>
     <script src="/static/tinymce/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
     <script type="module">
         import zh_CN from '/static/filepond-master/locale/zh-cn.js';
@@ -105,20 +117,18 @@
             else echo "null";
             ?>
 
-
         function onDOMCLoad() {
             FilePond.setOptions(zh_CN);
+            FilePond.registerPlugin(FilePondPluginFileValidateType);
             const inputElement = document.querySelector('.filepond')
             const pond = FilePond.create(inputElement, {
                 server: "/upload_handler",
                 files: filepondMock ? [{
                     // the server file reference
                     source: filepondMock.source,
-
                     // set type to local to indicate an already uploaded file
                     options: {
                         type: 'local',
-
                         // mock file information
                         file: {
                             name: filepondMock.name,
@@ -165,11 +175,17 @@
             <?php
             foreach ($posts as $post) { ?>
                 <li>
+                    <div id="postReplyToSec">
+                        <?php
+                        if ($post["reply_to_update_time"])
+                            echo "回复 " . $post["reply_to_user_name"] . " 在 " . $post["reply_to_update_time"] . ":";
+                        ?>
+                    </div>
                     <div id="postUpSec">
                         <div id="postUpLeftSec">
-                            <div><?php echo $post["user"]["name"]; ?></div>
+                            <div><?php echo $post["user_name"]; ?></div>
                             <div id="postTime"><?php echo $post["update_time"]; ?></div>
-                            <?php if (isset($uinfo)) echo "<a href='/?reply=" . $post["id"] . "'>回复</a>" ?>
+                            <?php if (isset($uinfo)) echo "<a href='/?replyTo=" . $post["id"] . "#bottomSec'>回复</a>" ?>
                         </div>
                         <div id="postOpSec">
                             <?php if (isset($uinfo) && $post["user_id"] == $uinfo["id"]) { ?>
@@ -193,7 +209,11 @@
     </div>
     <?php if (isset($uinfo)) { ?>
         <div id="bottomSec">
-            <div id="bottomSe-reply"></div>
+            <div id="bottomSec-replyTo">
+                <?php if (isset($replyToPost))
+                    echo "回复 " . $replyToPost["user"]["name"] . " 在 " . $post["update_time"] . " :";
+                ?>
+            </div>
             <form action="" method="post" enctype="multipart/form-data" id="postEdit">
                 <input type="hidden" name="__token__" value="{$Request.token}">
 

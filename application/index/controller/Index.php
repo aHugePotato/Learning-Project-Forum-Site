@@ -45,7 +45,7 @@ class Index extends BaseController
                     $saveArr["media"] = date("Ymd") . "/" . $vidFileId;
                 }
 
-                if (!$postModel->save($saveArr,["id" => input("get.id")]))
+                if (!$postModel->save($saveArr, ["id" => input("get.id")]))
                     $this->error("操作失败");
                 $this->success("成功", "/");
             } else {
@@ -54,6 +54,7 @@ class Index extends BaseController
                 if (!$postModel->save([
                     "text" => $newPost,
                     "user_id" => session("uid"),
+                    "post_id" => input("get.replyTo") ? input("get.replyTo") : null,
                     "media" => $vidFileId ?  date("Ymd") . "/" . $vidFileId : null
                 ]))
                     $this->error("操作失败");
@@ -61,7 +62,17 @@ class Index extends BaseController
                 $this->success("成功", "/");
             }
         } else if ($this->request->isGet()) {
-            if (input("get.op") == "edit" && input("get.id")) {
+            if (input("get.replyTo")) {
+                $post = Post::with(["user" => function ($q) {
+                    $q->field("id,name");
+                }])
+                    ->where("id", input("get.replyTo"))
+                    ->field("id,update_time,user_id")
+                    ->find();
+                if (!$post)
+                    return $this->error("对象不存在。");
+                $this->assign("replyToPost", $post);
+            } else if (input("get.op") == "edit" && input("get.id")) {
                 $post = $postModel->where("id", input("get.id"))->find();
                 $this->assign("editContent", $post["text"]);
                 if (!empty($post["media"]))
@@ -69,7 +80,7 @@ class Index extends BaseController
                         "source" => "mock",
                         "name" => explode("/", $post["media"])[1],
                         "size" => filesize(ROOT_PATH . 'public' . DS . 'uploads' . DS . $post["media"]),
-                        "type" => "video/".pathinfo($post["media"],PATHINFO_EXTENSION)
+                        "type" => "video/" . pathinfo($post["media"], PATHINFO_EXTENSION)
                     ]);
                 $this->assign("postUpdateId", input("get.id"));
             }
@@ -78,9 +89,17 @@ class Index extends BaseController
             if (!empty($uinfo))
                 $this->assign("uinfo", $uinfo);
 
-            $postList = Post::with(["user" => function ($query) {
-                $query->field('id,name');
-            }])->order("update_time", "desc")->paginate(15);
+            $postList = (new Post())
+                ->alias("a")
+                ->join("tp_user b", "a.user_id = b.id")
+                ->join("tp_post c", "a.post_id = c.id", "left")
+                ->join("tp_user d", "c.user_id = d.id", "left")
+                ->field("a.id, a.text, a.create_time, a.update_time, a.user_id, a.media, a.post_id,
+                 b.id as user_id, b.name as user_name")
+                ->field("c.id as reply_to_id, FROM_UNIXTIME(c.update_time) as reply_to_update_time,
+                 d.name as reply_to_user_name, d.name as reply_to_user_name")
+                ->order("update_time", "desc")
+                ->paginate(15);
             $this->assign("posts", $postList);
             return view();
         }
