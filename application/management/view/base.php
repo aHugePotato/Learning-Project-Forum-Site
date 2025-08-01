@@ -34,7 +34,7 @@
             margin-top: 80px;
         }
     </style>
-    {block name="inlineCss"}
+    {block name="css"}
     {/block}
 </head>
 

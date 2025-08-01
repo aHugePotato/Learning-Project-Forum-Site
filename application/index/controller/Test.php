@@ -17,10 +17,10 @@ class Test extends BaseController
 
     private static function f()
     {
-        return;
     }
 
     public function index()
     {
+        return strtotime("2002%1%1");
     }
 }

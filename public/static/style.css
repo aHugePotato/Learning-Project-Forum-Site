@@ -46,6 +46,12 @@ input[type="password"] {
     line-height: 30px;
 }
 
+input[type="datetime-local"],
+input[type="date"] {
+    border: 1px solid rgb(180, 180, 180);
+    border-radius: 2px;
+}
+
 a {
     text-decoration-line: none;
     color: #2b7efa;

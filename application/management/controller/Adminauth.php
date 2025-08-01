@@ -15,7 +15,13 @@ class AdminAuth extends BaseController
             $vali = new Validate(["__token__|require" => "token", "name" => "require|max:200", "email" => "email", "password" => "require|max:30|min:5"]);
             if (!$vali->check(input("post.")))
                 $this->error("请检查输入。");
-            $adminModel->save(["name" => input("post.name"), "email" => input("post.email"), "hash" => password_hash(input("post.password"), PASSWORD_BCRYPT)]);
+            if ($adminModel->where("name", input("post.name"))->find())
+                $this->error("该名称已被注册。");
+            $adminModel->save([
+                "name" => input("post.name"),
+                "email" => input("post.email"),
+                "hash" => password_hash(input("post.password"), PASSWORD_BCRYPT)
+            ]);
             session(null);
             session_regenerate_id();
             session("aid", $adminModel->id);
@@ -40,7 +46,7 @@ class AdminAuth extends BaseController
             $admin = (new AdminModel())->where("name", input("post.name"))->find();
             if (!$admin)
                 $this->error("用户不存在。");
-            if($admin["disabled"])
+            if ($admin["disabled"])
                 $this->error("账户已禁用。");
             if (!password_verify(input("post.password"), $admin["hash"]))
                 $this->error("密码错误。");

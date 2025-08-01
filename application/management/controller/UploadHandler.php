@@ -1,6 +1,6 @@
 <?php
 
-namespace app\index\controller;
+namespace app\management\controller;
 
 use app\common\controller\BaseUploadHandler;
 
@@ -10,11 +10,10 @@ use app\common\controller\BaseUploadHandler;
  */
 class UploadHandler extends BaseUploadHandler
 {
-    protected $fileExtensions = "mp4,mov,avi,mwv,mkv,mpg,mpeg";
-    protected $inputName = "video";
+    protected $fileExtensions = "xlsx,xls";
 
     protected function auth()
     {
-        return session("uid");
+        return check_permission(session("aid"),"import_posts");
     }
 }

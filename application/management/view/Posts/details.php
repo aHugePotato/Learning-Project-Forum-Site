@@ -1,5 +1,5 @@
 {extend name="base" /}
-{block name="inlineCss"}
+{block name="css"}
 <style>
     #mainSec {
         margin: auto;
@@ -28,7 +28,7 @@
         font-size: 1.5em;
         padding-top: 1em;
         font-weight: normal;
-        padding-bottom: 10px;
+        padding-bottom: 0.4em;
     }
 
     #textTitle {
@@ -70,9 +70,9 @@
     <h2 id="mainSecTitle">发文详细</h2>
     <h3 id="textTitle">内容</h3>
     <?php if ($data["reply_to_update_time"]) { ?>
-        <a id="replyToSec" href="<?php echo "/management/posts/details/id/" . $data["reply_to_id"] ?>">
+        <a id="replyToSec" href="<?php echo "/management/posts/details/id/" . $data["post_id"] ?>">
             <?php echo "回复 " . $data["reply_to_user_name"] . " 在 " . $data["reply_to_update_time"]
-                . " 的发文(id:" . $data["reply_to_id"] . ") :" ?>
+                . " 的发文(id:" . $data["post_id"] . ") :" ?>
         </a>
     <?php } ?>
     <div id="contentSec">

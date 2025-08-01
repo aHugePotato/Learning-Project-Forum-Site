@@ -1,5 +1,5 @@
 {extend name="base" /}
-{block name="inlineCss"}
+{block name="css"}
 <style>
     #mainSec {
         margin: auto;
@@ -32,7 +32,7 @@
         font-size: 1.5em;
         padding-top: 1.5em;
         font-weight: normal;
-        padding-bottom: 10px;
+        padding-bottom: 0.4em;
     }
 
     #descriptSec {

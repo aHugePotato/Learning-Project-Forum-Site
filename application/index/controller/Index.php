@@ -90,14 +90,7 @@ class Index extends BaseController
                 $this->assign("uinfo", $uinfo);
 
             $postList = (new Post())
-                ->alias("a")
-                ->join("tp_user b", "a.user_id = b.id")
-                ->join("tp_post c", "a.post_id = c.id", "left")
-                ->join("tp_user d", "c.user_id = d.id", "left")
-                ->field("a.id, a.text, a.create_time, a.update_time, a.user_id, a.media, a.post_id,
-                 b.id as user_id, b.name as user_name")
-                ->field("c.id as reply_to_id, FROM_UNIXTIME(c.update_time) as reply_to_update_time,
-                 d.name as reply_to_user_name, d.name as reply_to_user_name")
+                ->info()
                 ->order("update_time", "desc")
                 ->paginate(15);
             $this->assign("posts", $postList);

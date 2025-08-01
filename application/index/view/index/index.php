@@ -123,6 +123,7 @@
             const inputElement = document.querySelector('.filepond')
             const pond = FilePond.create(inputElement, {
                 server: "/upload_handler",
+                acceptedFileTypes:["video/mp4","video/mov","video/avi","video/mpg","video/mpeg","video/mkv","video/mwv"],
                 files: filepondMock ? [{
                     // the server file reference
                     source: filepondMock.source,
@@ -224,8 +225,7 @@
 
                 <div id="bottomSec-fileSelSec">
                     <label for="bottomSec-fileSelBut">上传视频:</label><br>
-                    <input name="video" type="file" accept=".mp4,.mov,.avi,.mwv,.mkv,.mpg,.mpeg"
-                        class="filepond" id="bottomSec-fileSelBut">
+                    <input name="video" type="file" class="filepond" id="bottomSec-fileSelBut">
                 </div>
 
                 <div id="bottomSec-submit">

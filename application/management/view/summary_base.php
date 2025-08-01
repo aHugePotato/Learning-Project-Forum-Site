@@ -30,7 +30,7 @@
             }
         }
     </style>
-    {block name="inlineCss"}
+    {block name="css"}
     <style>
         #mainSec {
             margin: auto;
@@ -46,12 +46,11 @@
             width: 100%;
         }
 
-        #mainSecTitle,
-        #mainSecTitle2 {
+        h2 {
             margin: 0px;
             font-size: 1.8em;
             padding-top: 1em;
-            padding-bottom: 1em;
+            padding-bottom: 0.4em;
             font-weight: normal;
         }
 
@@ -61,6 +60,8 @@
             padding-right: 1em;
         }
     </style>
+    {/block}
+    {block name="scripts"}
     {/block}
 </head>
 
@@ -85,8 +86,8 @@
         {block name="paginate"}
         <?php echo $tableData->render() ?>
         {/block}
+        {block name="others"}
         <h2 id="mainSecTitle2">统计</h2>
-        {block name="sumTable"}
         <table id="sumTable">
             <tr>
                 <th>合计</th>

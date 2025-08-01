@@ -15,7 +15,13 @@ class UserAuth extends BaseController
             $vali = new Validate(["__token__|require" => "token", "name" => "require|max:200", "email" => "require|email", "password" => "require|max:30|min:5"]);
             if (!$vali->check(input("post.")))
                 $this->error("请检查输入。");
-            $userModel->save(["name" => input("post.name"), "email" => input("post.email"), "hash" => password_hash(input("post.password"), PASSWORD_BCRYPT)]);
+            if ($userModel->where("email", input("post.email"))->find())
+                $this->error("该邮箱已被注册。");
+            $userModel->save([
+                "name" => input("post.name"),
+                "email" => input("post.email"),
+                "hash" => password_hash(input("post.password"), PASSWORD_BCRYPT)
+            ]);
             session(null);
             session_regenerate_id();
             session("uid", $userModel->id);
@@ -39,6 +45,8 @@ class UserAuth extends BaseController
             $user = (new UserModel())->where("email", input("post.email"))->find();
             if (!$user)
                 $this->error("用户不存在。");
+            if ($user["disabled"])
+                $this->error("用户已禁用。");
             if (!password_verify(input("post.password"), $user["hash"]))
                 $this->error("密码错误。");
             session(null);

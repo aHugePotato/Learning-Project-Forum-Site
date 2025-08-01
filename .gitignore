@@ -4,3 +4,4 @@ thinkphp
 vendor
 public/uploads
 public/tmp
+for_comment_generate_delete_when_deploy.php
