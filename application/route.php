@@ -24,6 +24,7 @@ Route::rule(
         "" => "index/Index/index",
         "delete" => "index/Index/delete",
         "ajax_img_upload" => "index/Index/ajax_img_upload",
+        "management^"=>"management/Posts/index"
     ]
 );
 
